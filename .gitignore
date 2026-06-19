@@ -77,3 +77,5 @@ data/generated/*.csv
 tmp/
 temp/
 *.tmp
+
+data/generatored
