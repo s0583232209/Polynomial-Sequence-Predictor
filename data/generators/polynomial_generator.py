@@ -14,10 +14,9 @@ MAX_DEGREE = 5
 MIN_COEFF = -10
 MAX_COEFF = 10
 
-MIN_SEQUENCE_LENGTH = 5
-MAX_SEQUENCE_LENGTH = 10
-
+INPUT_LENGTH = 8
 NEXT_VALUES = 3
+
 
 NUMBER_OF_SEQUENCES = 50000
 
@@ -58,10 +57,7 @@ def generate_sequence():
             MAX_COEFF
         )
 
-    length = random.randint(
-        MIN_SEQUENCE_LENGTH,
-        MAX_SEQUENCE_LENGTH
-    )
+    length = INPUT_LENGTH
 
     sequence = []
     start_n = random.randint(-20, 30)
@@ -79,7 +75,7 @@ def generate_sequence():
     for n in range(start_n + length,start_n + length + NEXT_VALUES):
         next_values.append(polynomial_value(coefficients, n))
 
-        return {
+    return {
 
             "degree": degree,
 
