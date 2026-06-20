@@ -91,8 +91,15 @@ class PolynomialDataset(Dataset):
         # ----------------------------
         # normalization (SAFE)
         # ----------------------------
-        if self.mean is not None and self.std is not None:
-            x = (x - self.mean) / self.std
-            y = (y - self.mean) / self.std
+        # compute statistics from the input sequence
+        mean = x.mean()
+        std = x.std()
 
+        # avoid division by zero
+        if std < 1e-8:
+            std = 1.0
+
+        # normalize input and target
+        x = (x - mean) / std
+        y = (y - mean) / std
         return x, y
