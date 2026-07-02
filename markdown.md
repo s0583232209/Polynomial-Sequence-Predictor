@@ -292,19 +292,25 @@ Dataset Exploration         DONE
 
 Dataset Split               DONE
 
-PyTorch Dataset             TODO
+PyTorch Dataset             DONE
 
-DataLoader                  TODO
+DataLoader                  DONE
 
-Baseline Rule Solver        TODO
+Baseline Rule Solver        DONE
 
-MLP Model                   TODO
+MLP Model                   DONE
 
-Training Pipeline           TODO
+Training Pipeline           DONE
 
-Validation                  TODO
+Validation                  DONE
 
-Prediction                  TODO
+Save Best Model             DONE
+
+Testing                     DONE
+
+Prediction Samples          DONE
+
+predict.py                  TODO
 
 GUI                         TODO
 
@@ -320,21 +326,16 @@ Final Presentation          TODO
 Create
 
 ```
-data/dataset.py
-```
-
-Implement
-
-```
-class PolynomialDataset(Dataset)
+predict.py
 ```
 
 Responsibilities:
 
-- load CSV
-- convert string sequences to lists
-- convert lists to torch.FloatTensor
-- return
+- load best_model.pth
+- receive a new input sequence
+- normalize the input
+- predict the next three values
+- display the prediction
 
 ```
 x = input sequence
@@ -344,20 +345,21 @@ y = target sequence
 
 ---
 
-# Planned Model
+# Current Model
 
-Initial architecture:
+Architecture:
 
 ```
 Input (8)
 
 ↓
 
-Linear
+LSTM
+(2 layers, hidden size = 64)
 
 ↓
 
-ReLU
+Dropout
 
 ↓
 
@@ -376,11 +378,13 @@ Linear
 Output (3)
 ```
 
-Simple MLP first.
+Current implementation:
+
+- LSTM
+- Fully Connected output layer
 
 Future comparison:
 
-- LSTM
 - Transformer
 
 ---
@@ -416,41 +420,53 @@ Create DataLoader
 
 3.
 
-Build MLP
+Build LSTM
 
 ↓
 
 4.
 
-Train
+Normalize Data
 
 ↓
 
 5.
 
-Validate
+Train
 
 ↓
 
 6.
 
-Save Best Model
+Validate
 
 ↓
 
 7.
 
-Test
+Save Best Model
 
 ↓
 
 8.
 
-Predict
+Test
 
 ↓
 
 9.
+
+Display Sample Predictions
+
+↓
+
+10.
+
+predict.py
+
+↓
+
+11.
 
 GUI
 
@@ -530,8 +546,49 @@ Never implement multiple large features simultaneously.
 
 # Current Status
 
-Project foundation is complete.
+The dataset and training infrastructure are complete.
 
-The dataset infrastructure is finished.
+Implemented:
 
-The next development task is implementing the PyTorch Dataset class and verifying that it correctly loads train.csv and returns tensors suitable for DataLoader and model training.
+- Dataset generation
+- Dataset exploration
+- Dataset split
+- PyTorch Dataset
+- DataLoader
+- LSTM model
+- Training pipeline
+- Per-sample normalization
+- Validation
+- Test evaluation
+- Best model saving
+- Loss visualization
+- Sample prediction evaluation
+
+The next development task is implementing
+
+```
+predict.py
+```
+
+which will load the trained model and predict the next three values of a new polynomial sequence.
+
+---
+
+# Current Evaluation Results
+
+Latest run:
+
+```
+Validation Loss ≈ 0.056
+
+Test Loss ≈ 0.080
+
+Test MAE ≈ 0.115
+```
+
+Observation:
+
+- Training converges successfully.
+- Validation and Test losses are very similar.
+- No significant overfitting observed.
+- Sample predictions closely match the target values.

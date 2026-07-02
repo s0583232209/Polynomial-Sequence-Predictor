@@ -106,3 +106,40 @@ plt.title("Training vs Validation Loss")
 plt.legend()
 plt.yscale("log")
 plt.show()
+
+# Load best model
+model.load_state_dict(torch.load("best_model.pth"))
+
+test_loss, test_mae = evaluate(
+    model,
+    test_loader,
+    criterion,
+    criterion_mae,
+    device,
+)
+
+print(f"\nTest MSE: {test_loss:.6f}")
+print(f"Test MAE: {test_mae:.6f}")
+
+print("\nSample predictions:")
+
+model.eval()
+
+with torch.no_grad():
+
+    x, y = next(iter(test_loader))
+
+    x = x.to(device)
+
+    predictions = model(x).cpu()
+
+    for i in range(5):
+
+        print("=" * 40)
+        print(f"Sample {i+1}")
+
+        print("Target:")
+        print(y[i])
+
+        print("Prediction:")
+        print(predictions[i])
