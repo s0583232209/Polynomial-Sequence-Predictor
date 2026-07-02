@@ -298,7 +298,7 @@ DataLoader                  DONE
 
 Baseline Rule Solver        DONE
 
-MLP Model                   DONE
+MLP Model                   SKIPPED
 
 Training Pipeline           DONE
 
