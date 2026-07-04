@@ -1,4 +1,4 @@
-# Polynomial-sequence-Predictor - Project Context
+# Polynomial-Sequence-Predictor - Project Context
 
 ## Project Overview
 
@@ -87,25 +87,21 @@ The dataset is completely synthetic.
 
 Degrees:
 
-```
-1
-2
-3
-4
-5
-```
+- 1
+- 2
+- 3
+- 4
+- 5
 
-Exactly 10,000 samples for each degree.
+Exactly **10,000 samples** for each degree.
 
 Total:
 
-```
-50,000 samples
-```
+**50,000 samples**
 
 ---
 
-# Polynomial Properties
+## Polynomial Properties
 
 General polynomial:
 
@@ -126,19 +122,15 @@ Features:
 
 ---
 
-# Sequence Properties
+## Sequence Properties
 
 Input sequence length:
 
-```
-8 numbers
-```
+**8 numbers**
 
 Target sequence length:
 
-```
-3 numbers
-```
+**3 numbers**
 
 Random starting index:
 
@@ -150,13 +142,13 @@ The target sequence is a direct continuation of the input sequence.
 
 ---
 
-# Duplicate Handling
+## Duplicate Handling
 
 Duplicate sequences are NOT allowed.
 
 Implementation:
 
-Python set()
+Python `set()`
 
 ```
 generated_sequences
@@ -172,26 +164,24 @@ instead of recursion.
 
 ---
 
-# CSV Structure
+## CSV Structure
 
 Columns:
 
-```
-degree
-formula
-coefficients
-start_n
-input_length
-target_length
-input_sequence
-target_sequence
-```
+- degree
+- formula
+- coefficients
+- start_n
+- input_length
+- target_length
+- input_sequence
+- target_sequence
 
 Example:
 
-| degree | formula | input_sequence        | target_sequence |
-| ------ | ------- | --------------------- | --------------- |
-| 2      | n²+2n+7 | 4,7,12,19,28,39,52,67 | 84,103,124      |
+| degree | formula | input_sequence | target_sequence |
+|---------|----------|----------------|-----------------|
+| 2 | n²+2n+7 | 4,7,12,19,28,39,52,67 | 84,103,124 |
 
 ---
 
@@ -210,7 +200,7 @@ Features:
 
 Status:
 
-DONE
+**DONE**
 
 ---
 
@@ -226,7 +216,7 @@ Checks:
 
 Status:
 
-DONE
+**DONE**
 
 ---
 
@@ -234,23 +224,19 @@ DONE
 
 Creates:
 
-```
-train.csv
-validation.csv
-test.csv
-```
+- train.csv
+- validation.csv
+- test.csv
 
 Recommended split:
 
-```
-80%
-10%
-10%
-```
+- 80%
+- 10%
+- 10%
 
 Status:
 
-DONE
+**DONE**
 
 ---
 
@@ -262,7 +248,7 @@ Polynomial-Sequence-Predictor
 
 Generated CSV files are NOT tracked.
 
-.gitignore ignores:
+`.gitignore` ignores:
 
 ```
 .idea/
@@ -310,7 +296,7 @@ Testing                     DONE
 
 Prediction Samples          DONE
 
-predict.py                  TODO
+predict.py                  DONE
 
 GUI                         TODO
 
@@ -323,25 +309,15 @@ Final Presentation          TODO
 
 # Next Immediate Step
 
-Create
-
-```
-predict.py
-```
+Develop the GUI.
 
 Responsibilities:
 
-- load best_model.pth
-- receive a new input sequence
-- normalize the input
-- predict the next three values
-- display the prediction
-
-```
-x = input sequence
-
-y = target sequence
-```
+- load the trained model
+- allow the user to enter an input sequence
+- validate user input
+- run prediction using `predict.py`
+- display the predicted continuation
 
 ---
 
@@ -399,92 +375,81 @@ Purpose:
 
 Provide a benchmark.
 
-If AI performs worse than the mathematical solver,
-the implementation should be investigated.
+If AI performs worse than the mathematical solver, the implementation should be investigated.
 
 ---
 
 # Training Plan
 
-1.
-
+```
 Load Dataset
 
 ↓
-
-2.
 
 Create DataLoader
 
 ↓
 
-3.
-
 Build LSTM
 
 ↓
-
-4.
 
 Normalize Data
 
 ↓
 
-5.
-
 Train
 
 ↓
-
-6.
 
 Validate
 
 ↓
 
-7.
-
 Save Best Model
 
 ↓
-
-8.
 
 Test
 
 ↓
 
-9.
-
 Display Sample Predictions
 
 ↓
-
-10.
 
 predict.py
 
 ↓
 
-11.
-
 GUI
+```
+
+---
+
+# Prediction Module
+
+`predict.py` loads the trained model and performs inference on previously unseen polynomial sequences.
+
+Features:
+
+- loads `best_model.pth`
+- accepts an input sequence of eight integers
+- applies the same normalization used during training
+- predicts the next three values
+- restores predictions to the original scale
+- displays the predicted continuation
 
 ---
 
 # Evaluation Metrics
 
-Training Loss
-
-Validation Loss
-
-Test Loss
-
-MAE
-
-MSE
-
-Prediction Accuracy
+- Training Loss
+- Validation Loss
+- Test Loss
+- MAE
+- MSE
+- Prediction Accuracy
 
 ---
 
@@ -522,21 +487,10 @@ Take very small steps.
 
 Every step should:
 
-1.
-
-Implement one feature.
-
-2.
-
-Run successfully.
-
-3.
-
-Be tested.
-
-4.
-
-Be committed to Git.
+- Implement one feature.
+- Run successfully.
+- Be tested.
+- Be committed to Git.
 
 Only then continue.
 
@@ -546,7 +500,7 @@ Never implement multiple large features simultaneously.
 
 # Current Status
 
-The dataset and training infrastructure are complete.
+The core machine learning pipeline is now complete.
 
 Implemented:
 
@@ -563,14 +517,9 @@ Implemented:
 - Best model saving
 - Loss visualization
 - Sample prediction evaluation
+- Standalone prediction module (`predict.py`)
 
-The next development task is implementing
-
-```
-predict.py
-```
-
-which will load the trained model and predict the next three values of a new polynomial sequence.
+The next development task is building a graphical user interface (GUI) that allows users to enter a polynomial sequence and view the model's predicted continuation.
 
 ---
 
@@ -578,13 +527,11 @@ which will load the trained model and predict the next three values of a new pol
 
 Latest run:
 
-```
-Validation Loss ≈ 0.056
+Validation Loss ≈ **0.056**
 
-Test Loss ≈ 0.080
+Test Loss ≈ **0.080**
 
-Test MAE ≈ 0.115
-```
+Test MAE ≈ **0.115**
 
 Observation:
 
