@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -m pip install PyQt5)",
+      "Bash(QT_QPA_PLATFORM=offscreen python -c ' *)",
+      "PowerShell(& \"C:\\\\Users\\\\Sarah_Fink\\\\AppData\\\\Local\\\\Python\\\\bin\\\\python.exe\" -c \"import torch; print\\(torch.__version__\\)\")"
+    ]
+  }
+}

@@ -3,3 +3,4 @@ scikit-learn~=1.9.0
 torch~=2.12.1
 numpy~=2.4.6
 matplotlib
+PyQt5

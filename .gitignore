@@ -79,3 +79,9 @@ temp/
 *.tmp
 
 data/generated
+
+# ---------------------------------
+# Internal session docs (not part of the repo)
+# ---------------------------------
+
+GUI_SUMMARY_HE.html

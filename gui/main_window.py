@@ -1,0 +1,323 @@
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QDoubleValidator
+from PyQt5.QtWidgets import (
+    QFrame,
+    QGridLayout,
+    QHBoxLayout,
+    QLabel,
+    QLineEdit,
+    QMainWindow,
+    QMessageBox,
+    QPushButton,
+    QVBoxLayout,
+    QWidget,
+)
+
+import predict
+from gui.graph_canvas import GraphCanvas
+from gui.predict_worker import PredictWorker
+from gui.styles import (
+    OUTPUT_DEFAULT_STYLE,
+    OUTPUT_ERROR_STYLE,
+    OUTPUT_LOADING_STYLE,
+    OUTPUT_RESULT_STYLE,
+)
+
+INPUT_COUNT = 8
+OUTPUT_COUNT = 3
+SUBSCRIPTS = "₀₁₂₃₄₅₆₇₈₉"
+EXAMPLE_SEQUENCE = [5, 8, 13, 20, 29, 40, 53, 68]
+
+
+def subscript(n: int) -> str:
+    return "".join(SUBSCRIPTS[int(d)] for d in str(n))
+
+
+def format_value(value: float) -> str:
+    if abs(value - round(value)) < 0.05:
+        return str(round(value))
+    return f"{value:.1f}"
+
+
+class MainWindow(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("PolySeqNet — Polynomial Sequence Predictor")
+        self.setMinimumSize(900, 650)
+        self.resize(1100, 750)
+
+        self.input_fields: list[QLineEdit] = []
+        self.output_labels: list[QLabel] = []
+        self.worker: PredictWorker | None = None
+
+        self._build_ui()
+        self._refresh_model_status()
+
+    # ------------------------------------------------------------------
+    # UI construction
+    # ------------------------------------------------------------------
+    def _build_ui(self):
+        central = QWidget()
+        self.setCentralWidget(central)
+
+        root = QVBoxLayout(central)
+        root.setContentsMargins(24, 20, 24, 12)
+        root.setSpacing(16)
+
+        root.addWidget(self._build_header())
+
+        body = QHBoxLayout()
+        body.setSpacing(16)
+        body.addWidget(self._build_input_card(), 0)
+        body.addWidget(self._build_output_card(), 0)
+        root.addLayout(body)
+
+        root.addWidget(self._build_graph_card(), 1)
+
+        self.status = self.statusBar()
+        self.status.showMessage("Ready.")
+
+    def _build_header(self) -> QWidget:
+        header = QWidget()
+        layout = QVBoxLayout(header)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(2)
+
+        title = QLabel("∑  PolySeqNet")
+        title.setObjectName("titleLabel")
+        subtitle = QLabel(
+            "Enter 8 consecutive terms of an integer polynomial sequence "
+            "to predict the next 3."
+        )
+        subtitle.setObjectName("subtitleLabel")
+
+        layout.addWidget(title)
+        layout.addWidget(subtitle)
+        return header
+
+    def _build_input_card(self) -> QFrame:
+        card = QFrame()
+        card.setObjectName("card")
+        layout = QVBoxLayout(card)
+        layout.setContentsMargins(18, 16, 18, 16)
+        layout.setSpacing(10)
+
+        label = QLabel("INPUT SEQUENCE")
+        label.setObjectName("sectionLabel")
+        layout.addWidget(label)
+
+        grid = QGridLayout()
+        grid.setSpacing(8)
+
+        validator = QDoubleValidator()
+        validator.setNotation(QDoubleValidator.StandardNotation)
+
+        self.input_fields = []
+        for i in range(INPUT_COUNT):
+            col_wrap = QVBoxLayout()
+            col_wrap.setSpacing(2)
+
+            idx_label = QLabel(f"a{subscript(i)}")
+            idx_label.setObjectName("fieldIndex")
+            idx_label.setAlignment(Qt.AlignCenter)
+
+            field = QLineEdit()
+            field.setValidator(validator)
+            field.setAlignment(Qt.AlignCenter)
+            field.setFixedWidth(72)
+            field.returnPressed.connect(self._on_predict_clicked)
+
+            col_wrap.addWidget(idx_label)
+            col_wrap.addWidget(field)
+
+            row, col = divmod(i, 4)
+            wrapper = QWidget()
+            wrapper.setLayout(col_wrap)
+            grid.addWidget(wrapper, row, col)
+
+            self.input_fields.append(field)
+
+        layout.addLayout(grid)
+
+        buttons = QHBoxLayout()
+        buttons.setSpacing(8)
+
+        predict_btn = QPushButton("Predict  ▶")
+        predict_btn.setObjectName("predictButton")
+        predict_btn.clicked.connect(self._on_predict_clicked)
+        self.predict_button = predict_btn
+
+        clear_btn = QPushButton("Clear")
+        clear_btn.setObjectName("clearButton")
+        clear_btn.clicked.connect(self._on_clear_clicked)
+
+        buttons.addWidget(predict_btn)
+        buttons.addWidget(clear_btn)
+        layout.addLayout(buttons)
+
+        example_btn = QPushButton("Load example sequence")
+        example_btn.setObjectName("linkButton")
+        example_btn.setCursor(Qt.PointingHandCursor)
+        example_btn.clicked.connect(self._on_load_example)
+        layout.addWidget(example_btn, alignment=Qt.AlignLeft)
+
+        self.model_status_label = QLabel("")
+        self.model_status_label.setObjectName("subtitleLabel")
+        layout.addWidget(self.model_status_label)
+
+        layout.addStretch()
+        return card
+
+    def _build_output_card(self) -> QFrame:
+        card = QFrame()
+        card.setObjectName("card")
+        layout = QVBoxLayout(card)
+        layout.setContentsMargins(18, 16, 18, 16)
+        layout.setSpacing(10)
+
+        label = QLabel("PREDICTED CONTINUATION")
+        label.setObjectName("sectionLabel")
+        layout.addWidget(label)
+
+        row = QHBoxLayout()
+        row.setSpacing(8)
+
+        self.output_labels = []
+        for i in range(OUTPUT_COUNT):
+            col_wrap = QVBoxLayout()
+            col_wrap.setSpacing(2)
+
+            idx_label = QLabel(f"a{subscript(INPUT_COUNT + i)}")
+            idx_label.setObjectName("fieldIndex")
+            idx_label.setAlignment(Qt.AlignCenter)
+
+            value_label = QLabel("—")
+            value_label.setAlignment(Qt.AlignCenter)
+            value_label.setFixedWidth(72)
+            value_label.setFixedHeight(28)
+            value_label.setStyleSheet(OUTPUT_DEFAULT_STYLE)
+
+            col_wrap.addWidget(idx_label)
+            col_wrap.addWidget(value_label)
+
+            wrapper = QWidget()
+            wrapper.setLayout(col_wrap)
+            row.addWidget(wrapper)
+
+            self.output_labels.append(value_label)
+
+        layout.addLayout(row)
+        layout.addStretch()
+        return card
+
+    def _build_graph_card(self) -> QFrame:
+        card = QFrame()
+        card.setObjectName("card")
+        card.setMinimumHeight(300)
+        layout = QVBoxLayout(card)
+        layout.setContentsMargins(12, 12, 12, 12)
+
+        self.canvas = GraphCanvas(card)
+        layout.addWidget(self.canvas)
+        return card
+
+    # ------------------------------------------------------------------
+    # State helpers
+    # ------------------------------------------------------------------
+    def _refresh_model_status(self):
+        if predict.model_available():
+            self.model_status_label.setText("Model: loaded from best_model.pth")
+            self.predict_button.setEnabled(True)
+        else:
+            self.model_status_label.setText(
+                "Model not found — train the model first (best_model.pth missing)."
+            )
+            self.predict_button.setEnabled(False)
+
+    def _read_input_sequence(self) -> list[float] | None:
+        values = []
+        for i, field in enumerate(self.input_fields):
+            text = field.text().strip()
+            if not text:
+                QMessageBox.warning(
+                    self, "Missing value",
+                    f"Please fill in field a{subscript(i)}.",
+                )
+                return None
+            try:
+                values.append(float(text))
+            except ValueError:
+                QMessageBox.warning(
+                    self, "Invalid value",
+                    f"'{text}' in field a{subscript(i)} is not a valid number.",
+                )
+                return None
+        return values
+
+    def _set_output_state(self, state: str, values=None):
+        style_map = {
+            "default": OUTPUT_DEFAULT_STYLE,
+            "loading": OUTPUT_LOADING_STYLE,
+            "result": OUTPUT_RESULT_STYLE,
+            "error": OUTPUT_ERROR_STYLE,
+        }
+        style = style_map[state]
+
+        for i, label in enumerate(self.output_labels):
+            label.setStyleSheet(style)
+            if state == "default":
+                label.setText("—")
+            elif state == "loading":
+                label.setText("…")
+            elif state == "result" and values is not None:
+                label.setText(format_value(values[i]))
+            elif state == "error":
+                label.setText("!")
+
+    # ------------------------------------------------------------------
+    # Slots
+    # ------------------------------------------------------------------
+    def _on_predict_clicked(self):
+        if self.worker is not None and self.worker.isRunning():
+            return
+
+        sequence = self._read_input_sequence()
+        if sequence is None:
+            return
+
+        self.canvas.plot_sequence(sequence)
+        self._set_output_state("loading")
+        self.predict_button.setEnabled(False)
+        self.status.showMessage("Predicting…")
+
+        self.worker = PredictWorker(sequence)
+        self.worker.finished.connect(
+            lambda result: self._on_predict_finished(sequence, result)
+        )
+        self.worker.failed.connect(self._on_predict_failed)
+        self.worker.start()
+
+    def _on_predict_finished(self, sequence, result):
+        self.predict_button.setEnabled(True)
+        self._set_output_state("result", result)
+        self.canvas.plot_sequence(sequence, result)
+        self.status.showMessage("Prediction complete.", 5000)
+
+    def _on_predict_failed(self, message: str):
+        self.predict_button.setEnabled(True)
+        self._set_output_state("error")
+        self.status.showMessage(f"Error: {message}", 8000)
+        QMessageBox.critical(self, "Prediction failed", message)
+
+    def _on_clear_clicked(self):
+        for field in self.input_fields:
+            field.clear()
+        self._set_output_state("default")
+        self.canvas.clear_plot()
+        self.status.showMessage("Cleared.", 3000)
+
+    def _on_load_example(self):
+        for field, value in zip(self.input_fields, EXAMPLE_SEQUENCE):
+            field.setText(str(value))
+        self.canvas.plot_sequence(EXAMPLE_SEQUENCE)
+        self.status.showMessage("Loaded example sequence.", 3000)
