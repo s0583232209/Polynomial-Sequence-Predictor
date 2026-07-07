@@ -17,6 +17,7 @@ import predict
 from gui.graph_canvas import GraphCanvas
 from gui.predict_worker import PredictWorker
 from gui.styles import (
+    CORAL,
     OUTPUT_DEFAULT_STYLE,
     OUTPUT_ERROR_STYLE,
     OUTPUT_LOADING_STYLE,
@@ -43,8 +44,8 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("PolySeqNet — Polynomial Sequence Predictor")
-        self.setMinimumSize(900, 650)
-        self.resize(1100, 750)
+        self.setMinimumSize(1400, 820)
+        self.resize(1500, 900)
 
         self.input_fields: list[QLineEdit] = []
         self.output_labels: list[QLabel] = []
@@ -67,12 +68,14 @@ class MainWindow(QMainWindow):
         root.addWidget(self._build_header())
 
         body = QHBoxLayout()
-        body.setSpacing(16)
-        body.addWidget(self._build_input_card(), 0)
-        body.addWidget(self._build_output_card(), 0)
-        root.addLayout(body)
+        body.setSpacing(20)
+        body.addWidget(self._build_input_card(), 2)
+        body.addWidget(self._build_output_card(), 1)
+        root.addLayout(body, 1)
 
-        root.addWidget(self._build_graph_card(), 1)
+        graph_card = self._build_graph_card()
+        graph_card.setMaximumHeight(190)
+        root.addWidget(graph_card, 0)
 
         self.status = self.statusBar()
         self.status.showMessage("Ready.")
@@ -83,7 +86,7 @@ class MainWindow(QMainWindow):
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(2)
 
-        title = QLabel("∑  PolySeqNet")
+        title = QLabel(f'<span style="color:{CORAL};">∑</span>&nbsp;&nbsp;PolySeqNet')
         title.setObjectName("titleLabel")
         subtitle = QLabel(
             "Enter 8 consecutive terms of an integer polynomial sequence "
@@ -99,15 +102,16 @@ class MainWindow(QMainWindow):
         card = QFrame()
         card.setObjectName("card")
         layout = QVBoxLayout(card)
-        layout.setContentsMargins(18, 16, 18, 16)
-        layout.setSpacing(10)
+        layout.setContentsMargins(28, 24, 28, 24)
+        layout.setSpacing(18)
+        layout.addStretch()
 
         label = QLabel("INPUT SEQUENCE")
-        label.setObjectName("sectionLabel")
+        label.setObjectName("sectionLabelInput")
         layout.addWidget(label)
 
         grid = QGridLayout()
-        grid.setSpacing(8)
+        grid.setSpacing(18)
 
         validator = QDoubleValidator()
         validator.setNotation(QDoubleValidator.StandardNotation)
@@ -115,16 +119,16 @@ class MainWindow(QMainWindow):
         self.input_fields = []
         for i in range(INPUT_COUNT):
             col_wrap = QVBoxLayout()
-            col_wrap.setSpacing(2)
+            col_wrap.setSpacing(6)
 
             idx_label = QLabel(f"a{subscript(i)}")
-            idx_label.setObjectName("fieldIndex")
+            idx_label.setObjectName("fieldIndexInput")
             idx_label.setAlignment(Qt.AlignCenter)
 
             field = QLineEdit()
             field.setValidator(validator)
             field.setAlignment(Qt.AlignCenter)
-            field.setFixedWidth(72)
+            field.setFixedSize(150, 84)
             field.returnPressed.connect(self._on_predict_clicked)
 
             col_wrap.addWidget(idx_label)
@@ -140,7 +144,7 @@ class MainWindow(QMainWindow):
         layout.addLayout(grid)
 
         buttons = QHBoxLayout()
-        buttons.setSpacing(8)
+        buttons.setSpacing(12)
 
         predict_btn = QPushButton("Predict  ▶")
         predict_btn.setObjectName("predictButton")
@@ -172,29 +176,29 @@ class MainWindow(QMainWindow):
         card = QFrame()
         card.setObjectName("card")
         layout = QVBoxLayout(card)
-        layout.setContentsMargins(18, 16, 18, 16)
-        layout.setSpacing(10)
+        layout.setContentsMargins(28, 24, 28, 24)
+        layout.setSpacing(18)
+        layout.addStretch()
 
         label = QLabel("PREDICTED CONTINUATION")
-        label.setObjectName("sectionLabel")
+        label.setObjectName("sectionLabelOutput")
         layout.addWidget(label)
 
-        row = QHBoxLayout()
-        row.setSpacing(8)
+        row = QVBoxLayout()
+        row.setSpacing(18)
 
         self.output_labels = []
         for i in range(OUTPUT_COUNT):
             col_wrap = QVBoxLayout()
-            col_wrap.setSpacing(2)
+            col_wrap.setSpacing(6)
 
             idx_label = QLabel(f"a{subscript(INPUT_COUNT + i)}")
-            idx_label.setObjectName("fieldIndex")
+            idx_label.setObjectName("fieldIndexOutput")
             idx_label.setAlignment(Qt.AlignCenter)
 
             value_label = QLabel("—")
             value_label.setAlignment(Qt.AlignCenter)
-            value_label.setFixedWidth(72)
-            value_label.setFixedHeight(28)
+            value_label.setFixedSize(150, 84)
             value_label.setStyleSheet(OUTPUT_DEFAULT_STYLE)
 
             col_wrap.addWidget(idx_label)
@@ -213,9 +217,8 @@ class MainWindow(QMainWindow):
     def _build_graph_card(self) -> QFrame:
         card = QFrame()
         card.setObjectName("card")
-        card.setMinimumHeight(300)
         layout = QVBoxLayout(card)
-        layout.setContentsMargins(12, 12, 12, 12)
+        layout.setContentsMargins(10, 8, 10, 8)
 
         self.canvas = GraphCanvas(card)
         layout.addWidget(self.canvas)

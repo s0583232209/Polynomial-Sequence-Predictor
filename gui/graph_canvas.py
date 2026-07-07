@@ -6,11 +6,11 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
 
-PAPER = "#FAF7F0"
-INK = "#1B2A4A"
-INDIGO = "#28407A"
-GOLD = "#C9A227"
-GRID = "#D8D2C4"
+PAPER = "#FFF9EF"
+INK = "#2E2B45"
+BLUE = "#2F80ED"
+CORAL = "#FF6B4A"
+GRID = "#EDE1C6"
 
 
 class GraphCanvas(FigureCanvasQTAgg):
@@ -18,7 +18,7 @@ class GraphCanvas(FigureCanvasQTAgg):
     available, the model's predicted continuation."""
 
     def __init__(self, parent=None):
-        self.figure = Figure(figsize=(5, 3), dpi=100, facecolor=PAPER)
+        self.figure = Figure(figsize=(5, 1.7), dpi=100, facecolor=PAPER)
         super().__init__(self.figure)
         self.setParent(parent)
 
@@ -33,11 +33,10 @@ class GraphCanvas(FigureCanvasQTAgg):
         for spine in ax.spines.values():
             spine.set_color(GRID)
 
-        ax.tick_params(colors=INK, labelsize=9)
+        ax.tick_params(colors=INK, labelsize=8)
         ax.grid(True, color=GRID, linewidth=0.8, linestyle="--", alpha=0.8)
-        ax.set_xlabel("n", color=INK, fontsize=10, style="italic")
-        ax.set_ylabel("a(n)", color=INK, fontsize=10, style="italic")
-        ax.set_title("Sequence", color=INK, fontsize=11, fontweight="bold")
+        ax.set_xlabel("n", color=INK, fontsize=9, style="italic")
+        ax.set_ylabel("a(n)", color=INK, fontsize=9, style="italic")
 
     def plot_sequence(self, input_values, predicted_values=None):
         ax = self.axes
@@ -45,10 +44,10 @@ class GraphCanvas(FigureCanvasQTAgg):
         self._style_axes()
 
         input_x = list(range(len(input_values)))
-        ax.plot(input_x, input_values, color=INDIGO, linewidth=1.5, zorder=2)
+        ax.plot(input_x, input_values, color=BLUE, linewidth=2, zorder=2)
         ax.scatter(
             input_x, input_values,
-            color=INDIGO, s=45, zorder=3, label="Input",
+            color=BLUE, s=55, zorder=3, label="Input",
         )
 
         if predicted_values:
@@ -60,11 +59,11 @@ class GraphCanvas(FigureCanvasQTAgg):
 
             ax.plot(
                 pred_x, pred_y,
-                color=GOLD, linewidth=1.5, linestyle="--", zorder=2,
+                color=CORAL, linewidth=2, linestyle="--", zorder=2,
             )
             ax.scatter(
                 pred_x[1:], pred_y[1:],
-                color=GOLD, s=55, marker="D", zorder=3, label="Predicted",
+                color=CORAL, s=65, marker="D", zorder=3, label="Predicted",
             )
 
         ax.legend(

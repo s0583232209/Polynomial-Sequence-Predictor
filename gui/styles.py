@@ -1,22 +1,33 @@
-"""Light, academic/mathematics-themed stylesheet for the PolySeqNet GUI."""
+"""Light, playful mathematics-themed stylesheet for the PolySeqNet GUI."""
 
-PAPER = "#FAF7F0"
+PAPER = "#FFF9EF"
 CARD = "#FFFFFF"
-INK = "#1B2A4A"
-INDIGO = "#28407A"
-INDIGO_DARK = "#1B2A4A"
-BORDER = "#D8D2C4"
-MUTED = "#7A7566"
-GOLD = "#C9A227"
-GOLD_BG = "#FFF6DD"
-ERROR = "#B3261E"
+INK = "#2E2B45"
+MUTED = "#7B7391"
+BORDER = "#EDE1C6"
+
+BLUE = "#2F80ED"
+BLUE_DARK = "#1C5FC4"
+
+TEAL = "#0FA88F"
+TEAL_DARK = "#0B8A75"
+
+CORAL = "#FF6B4A"
+CORAL_DARK = "#E85436"
+CORAL_BG = "#FFEEE7"
+
+YELLOW = "#F5B301"
+YELLOW_BG = "#FFF6DD"
+
+ERROR = "#E5484D"
+ERROR_BG = "#FDEDEE"
 
 STYLESHEET = f"""
 QWidget {{
     background-color: {PAPER};
     color: {INK};
-    font-family: "Georgia", "Cambria", serif;
-    font-size: 13px;
+    font-family: "Segoe UI", "Verdana", sans-serif;
+    font-size: 15px;
 }}
 
 QMainWindow {{
@@ -26,60 +37,75 @@ QMainWindow {{
 QFrame#card {{
     background-color: {CARD};
     border: 1px solid {BORDER};
-    border-radius: 10px;
+    border-radius: 12px;
 }}
 
 QLabel#titleLabel {{
-    color: {INDIGO_DARK};
-    font-size: 22px;
-    font-weight: bold;
+    color: {BLUE_DARK};
+    font-size: 34px;
+    font-weight: 800;
 }}
 
 QLabel#subtitleLabel {{
-    color: {MUTED};
-    font-size: 12px;
-    font-style: italic;
+    color: {TEAL_DARK};
+    font-size: 16px;
 }}
 
-QLabel#sectionLabel {{
-    color: {INDIGO_DARK};
-    font-size: 13px;
-    font-weight: bold;
+QLabel#sectionLabelInput {{
+    color: {BLUE_DARK};
+    font-size: 22px;
+    font-weight: 700;
     letter-spacing: 1px;
 }}
 
-QLabel#fieldIndex {{
-    color: {MUTED};
+QLabel#sectionLabelOutput {{
+    color: {CORAL_DARK};
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 1px;
+}}
+
+QLabel#fieldIndexInput {{
+    color: {BLUE};
     font-family: "Consolas", "Courier New", monospace;
-    font-size: 11px;
+    font-size: 30px;
+    font-weight: 700;
+}}
+
+QLabel#fieldIndexOutput {{
+    color: {CORAL_DARK};
+    font-family: "Consolas", "Courier New", monospace;
+    font-size: 30px;
+    font-weight: 700;
 }}
 
 QLineEdit {{
-    background-color: {PAPER};
-    border: 1px solid {BORDER};
-    border-radius: 6px;
-    padding: 6px;
+    background-color: {CARD};
+    border: 2px solid {BORDER};
+    border-radius: 10px;
+    padding: 8px;
     font-family: "Consolas", "Courier New", monospace;
-    font-size: 14px;
-    color: {INDIGO_DARK};
+    font-size: 34px;
+    font-weight: 600;
+    color: {INK};
 }}
 
 QLineEdit:focus {{
-    border: 1px solid {INDIGO};
+    border: 2px solid {BLUE};
 }}
 
 QPushButton#predictButton {{
-    background-color: {INDIGO};
+    background-color: {BLUE};
     color: {CARD};
     border: none;
-    border-radius: 6px;
-    padding: 9px 22px;
-    font-size: 14px;
-    font-weight: bold;
+    border-radius: 10px;
+    padding: 16px 34px;
+    font-size: 22px;
+    font-weight: 700;
 }}
 
 QPushButton#predictButton:hover {{
-    background-color: {INDIGO_DARK};
+    background-color: {BLUE_DARK};
 }}
 
 QPushButton#predictButton:disabled {{
@@ -89,83 +115,53 @@ QPushButton#predictButton:disabled {{
 
 QPushButton#clearButton {{
     background-color: transparent;
-    color: {INDIGO};
-    border: 1px solid {BORDER};
-    border-radius: 6px;
-    padding: 9px 18px;
-    font-size: 13px;
+    color: {TEAL_DARK};
+    border: 2px solid {TEAL};
+    border-radius: 10px;
+    padding: 14px 26px;
+    font-size: 20px;
+    font-weight: 600;
 }}
 
 QPushButton#clearButton:hover {{
-    background-color: {PAPER};
-    border: 1px solid {INDIGO};
+    background-color: #E9FBF7;
 }}
 
 QPushButton#linkButton {{
     background-color: transparent;
-    color: {INDIGO};
+    color: {CORAL_DARK};
     border: none;
-    font-size: 12px;
+    font-size: 16px;
+    font-weight: 600;
     text-decoration: underline;
 }}
 
 QPushButton#linkButton:hover {{
-    color: {INDIGO_DARK};
+    color: {CORAL};
 }}
 
 QStatusBar {{
     background-color: {CARD};
     color: {MUTED};
     border-top: 1px solid {BORDER};
-    font-size: 11px;
+    font-size: 13px;
 }}
 """
 
-OUTPUT_DEFAULT_STYLE = f"""
+_OUTPUT_BASE = """
 QLabel {{
-    background-color: {PAPER};
-    border: 1px solid {BORDER};
-    border-radius: 6px;
-    padding: 6px;
+    border-radius: 10px;
+    padding: 8px;
     font-family: "Consolas", "Courier New", monospace;
-    font-size: 14px;
-    color: {MUTED};
+    font-size: 34px;
+    font-weight: 700;
+    background-color: {bg};
+    border: 2px solid {border};
+    color: {fg};
 }}
 """
 
-OUTPUT_LOADING_STYLE = f"""
-QLabel {{
-    background-color: {PAPER};
-    border: 1px solid {INDIGO};
-    border-radius: 6px;
-    padding: 6px;
-    font-family: "Consolas", "Courier New", monospace;
-    font-size: 14px;
-    color: {INDIGO};
-}}
-"""
-
-OUTPUT_RESULT_STYLE = f"""
-QLabel {{
-    background-color: {GOLD_BG};
-    border: 1px solid {GOLD};
-    border-radius: 6px;
-    padding: 6px;
-    font-family: "Consolas", "Courier New", monospace;
-    font-size: 15px;
-    font-weight: bold;
-    color: {INDIGO_DARK};
-}}
-"""
-
-OUTPUT_ERROR_STYLE = f"""
-QLabel {{
-    background-color: {CARD};
-    border: 1px solid {ERROR};
-    border-radius: 6px;
-    padding: 6px;
-    font-family: "Consolas", "Courier New", monospace;
-    font-size: 14px;
-    color: {ERROR};
-}}
-"""
+OUTPUT_DEFAULT_STYLE = _OUTPUT_BASE.format(bg=CARD, border=BORDER, fg=MUTED)
+OUTPUT_LOADING_STYLE = _OUTPUT_BASE.format(bg=YELLOW_BG, border=YELLOW, fg="#9A7200")
+OUTPUT_RESULT_STYLE = _OUTPUT_BASE.format(bg=CORAL_BG, border=CORAL, fg=CORAL_DARK)
+OUTPUT_ERROR_STYLE = _OUTPUT_BASE.format(bg=ERROR_BG, border=ERROR, fg=ERROR)
