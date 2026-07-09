@@ -18,7 +18,7 @@ INPUT_LENGTH = 8
 NEXT_VALUES = 3
 
 
-NUMBER_OF_SEQUENCES = 50000
+NUMBER_OF_SEQUENCES = 200000
 
 OUTPUT_PATH = Path("../generated/polynomial_sequences.csv")
 
