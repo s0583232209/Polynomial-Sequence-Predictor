@@ -225,8 +225,4 @@ Validation and test loss are close, which suggests the model isn't significantly
 - PyQt5 (desktop GUI)
 - Git / GitHub
 
----
 
-## License
-
-No license has been specified yet — add one (e.g. MIT) if you want others to reuse this code.
