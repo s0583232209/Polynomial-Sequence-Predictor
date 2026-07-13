@@ -1,13 +1,27 @@
-import pandas as pd
-
+"""
+Explore and display information about the generated dataset.
+"""
 
 from pathlib import Path
+
+import pandas as pd
+
 
 BASE_DIR = Path(__file__).resolve().parents[2]
 
 DATASET_PATH = BASE_DIR / "data" / "generated" / "polynomial_sequences.csv"
 
+
 def main():
+    """
+    Print basic dataset statistics:
+        - Number of samples
+        - Columns
+        - Missing values
+        - Duplicate rows
+        - Degree distribution
+        - Example samples
+    """
 
     df = pd.read_csv(DATASET_PATH)
 
@@ -34,18 +48,19 @@ def main():
         print(f"Degree {degree}: {count}")
 
     print("\nExample rows:")
-
     print(df.head())
 
     print("\nUnique rows:")
     print(len(df.drop_duplicates()))
 
-    duplicate_percentage = (df.duplicated().sum() / len(df)) * 100
+    duplicate_percentage = (
+        df.duplicated().sum() / len(df)
+    ) * 100
 
-    print(f"\nDuplicate percentage: {duplicate_percentage:.2f}%")
-    lengths = df["input_sequence"].apply(
-    lambda x: len(str(x).split(","))
-)
+    print(
+        f"\nDuplicate percentage: "
+        f"{duplicate_percentage:.2f}%"
+    )
 
 
 if __name__ == "__main__":
