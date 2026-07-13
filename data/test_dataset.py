@@ -1,3 +1,6 @@
+"""
+Quick test for PolynomialDataset loading and output shapes.
+"""
 from data.dataset import PolynomialDataset
 
 dataset = PolynomialDataset("train")
