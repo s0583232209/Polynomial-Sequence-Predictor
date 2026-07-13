@@ -1,4 +1,4 @@
-# PolySeqNet
+# Polynomial Sequence Predictor
 
 **AI-powered polynomial integer sequence prediction, built with PyTorch.**
 
